@@ -23,17 +23,22 @@ public class MatchMaking_PUN : Photon.PunBehaviour
 
     void Start()
     {
-        InvokeRepeating("RegulerCheckPing", 5, 10.0f);
+     
     }
 
     public override void OnJoinedLobby()
     {
         Debug.Log("We Have Joined The Lobby!");
-        // base.OnJoinedLobby();
+    }
+
+
+    public void StartRandomMatch()
+    {
+        StartAMatch(null);
     }
 
     string expectedRoomName = null;
-    public void StartAMatch(string RoomName)
+    void StartAMatch(string RoomName)
     {
         if (PhotonNetwork.connectionState == ConnectionState.Connected)
         {
@@ -116,11 +121,8 @@ public class MatchMaking_PUN : Photon.PunBehaviour
         ExitGames.Client.Photon.Hashtable ResetProperties
                = new ExitGames.Client.Photon.Hashtable() { { "MS", null }, { "TB", null } };//MS = MyScore, TB = Team Belong
         PhotonNetwork.player.SetCustomProperties(ResetProperties);
-        Debug.Log("My In game id is " + PhotonNetwork.player.CustomProperties["GD"]);
 
-      //  LWNetwork.mode = NetworkMode.PUN;
-
-       // LoadingScreen.LoadScene((LWGameMode)ModeID, Map, -1);
+        Debug.Log("Have join this room.......");
     }
 
 
