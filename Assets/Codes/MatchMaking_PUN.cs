@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 using Photon;
 
 public class MatchMaking_PUN : Photon.PunBehaviour
@@ -123,6 +124,7 @@ public class MatchMaking_PUN : Photon.PunBehaviour
         PhotonNetwork.player.SetCustomProperties(ResetProperties);
 
         Debug.Log("Have join this room.......");
+        SceneManager.LoadScene("Demo");
     }
 
 
