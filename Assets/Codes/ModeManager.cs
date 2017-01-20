@@ -5,7 +5,7 @@ public class ModeManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        NetworkCreateTest();
+        GoodPlayerSpawn();
     }
 	
 	// Update is called once per frame
@@ -14,8 +14,8 @@ public class ModeManager : MonoBehaviour {
 	}
 
 
-    public void NetworkCreateTest()
+    public void GoodPlayerSpawn()
     {
-        PhotonNetwork.Instantiate("TestPrefab", Vector3.zero, Quaternion.identity, 0);
+        PhotonNetwork.Instantiate("GoodPlayer", Vector3.zero, Quaternion.identity, 0);
     }
 }

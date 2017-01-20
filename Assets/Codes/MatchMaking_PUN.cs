@@ -124,7 +124,8 @@ public class MatchMaking_PUN : Photon.PunBehaviour
         PhotonNetwork.player.SetCustomProperties(ResetProperties);
 
         Debug.Log("Have join this room.......");
-        SceneManager.LoadScene("Demo");
+        //SceneManager.LoadScene("Demo");
+        PhotonNetwork.LoadLevel("Demo");
     }
 
 
