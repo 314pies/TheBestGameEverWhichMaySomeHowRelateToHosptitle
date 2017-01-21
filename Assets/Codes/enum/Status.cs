@@ -2,5 +2,6 @@
 {
     Normal,
     Freeze,
-    Fall
+    Fall,
+    Exploing
 }

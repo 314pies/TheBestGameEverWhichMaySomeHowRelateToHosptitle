@@ -114,4 +114,21 @@ public class controller : Photon.MonoBehaviour
         yield return new WaitForSeconds(WaitTime);
         status = PlayerStatus.Normal;
     }
+
+
+    public void Explode(float force, Vector3 Dir)
+    {
+        photonView.RPC("Explosion", photonView.owner, force, Dir);
+    }
+
+    [PunRPC]
+    public void Explosion(float force, Vector3 dir)
+    {
+        Debug.Log("GonnaFly: " + force + ", " + dir);
+       // status = PlayerStatus.Exploing;
+        GetComponent<Rigidbody>().velocity = dir;
+        Debug.Log("Explode");
+
+    }
+
 }
