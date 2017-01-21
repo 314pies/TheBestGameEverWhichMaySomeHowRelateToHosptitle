@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
+[RequireComponent(typeof(AudioClip))]
 [RequireComponent(typeof(PhotonView))]
 public class IceBerg : MonoBehaviour
 {
@@ -18,6 +18,7 @@ public class IceBerg : MonoBehaviour
         if (other.tag == "Player" && other.GetComponent<PhotonView>().isMine)
         {
             other.SendMessage("Freeze", FreezeTime);
+            photonView.RPC("PlaySoundEffect", PhotonTargets.All);
             StartCoroutine(WaitAndRemove());
         }
     }
@@ -35,5 +36,12 @@ public class IceBerg : MonoBehaviour
         {
             PhotonNetwork.Destroy(gameObject);
         }
+    }
+
+    public AudioClip StepOnIceBerg;
+    [PunRPC]
+    public void PlaySoundEffect()
+    {
+        GetComponent<AudioSource>().PlayOneShot(StepOnIceBerg);
     }
 }

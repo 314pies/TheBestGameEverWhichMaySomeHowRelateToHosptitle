@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(AudioClip))]
 [RequireComponent(typeof(PhotonView))]
 public class Machine : MonoBehaviour
 {
@@ -30,6 +31,8 @@ public class Machine : MonoBehaviour
             Speed.Normalize();
             NewWave.GetComponent<Rigidbody>().velocity = Speed * BubbleSpeed;
             AvailableBubbles--;
+            photonView.RPC("PlaySoundEffect",PhotonTargets.All);
+
         }
         else if (AvailableBubbles <= 0)
         {
@@ -42,5 +45,13 @@ public class Machine : MonoBehaviour
     {
         if (photonView.isMine)
             PhotonNetwork.Destroy(gameObject);
+    }
+
+
+    public AudioClip LaunchBubble;
+    [PunRPC]
+    public void PlaySoundEffect()
+    {
+        GetComponent<AudioSource>().PlayOneShot(LaunchBubble);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(AudioClip))]
 [RequireComponent(typeof(PhotonView))]
 public class Bubble : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class Bubble : MonoBehaviour
             collision.gameObject.SendMessage("TriggedTrap", true);
             photonView.RPC("Remove", photonView.owner);
             gameObject.SetActive(false);
+            photonView.RPC("PlaySoundEffect", PhotonTargets.All);
         }
     }
     [PunRPC]
@@ -36,6 +38,13 @@ public class Bubble : MonoBehaviour
     {
         yield return new WaitForSeconds(LefeTime);
         PhotonNetwork.Destroy(gameObject);
+    }
+
+    public AudioClip RunIntoBubble;
+    [PunRPC]
+    public void PlaySoundEffect()
+    {
+        GetComponent<AudioSource>().PlayOneShot(RunIntoBubble);
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(AudioClip))]
 [RequireComponent(typeof(PhotonView))]
 public class Bombs : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class Bombs : MonoBehaviour
                     Vector3 Dir = hit.transform.position - transform.position;
                     Dir.Normalize();
                     hit.GetComponent<controller>().Explode(ExplosionPower, Dir * ExplosionPower);
+                    
                 }
             }
         }
@@ -36,10 +38,19 @@ public class Bombs : MonoBehaviour
     [PunRPC]
     public void ExplodeAndDestroy()
     {
+        photonView.RPC("PlaySoundEffect", PhotonTargets.All);
         Instantiate(ExplosionEffect, transform.position, Quaternion.identity);
         gameObject.SetActive(false);
         if (photonView.isMine)
             PhotonNetwork.Destroy(gameObject);
+    }
+
+    public AudioClip Bomb;
+    [PunRPC]
+    public void PlaySoundEffect()
+    {
+        Debug.Log("A______________A");
+        GetComponent<AudioSource>().PlayOneShot(Bomb, 1.0f);
     }
 
 }
