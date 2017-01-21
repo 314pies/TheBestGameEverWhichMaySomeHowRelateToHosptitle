@@ -6,3 +6,10 @@
     Exploing,
     Trapped
 }
+
+public enum Team
+{
+    Unknown,
+    GoodSide,
+    BadSide
+}
