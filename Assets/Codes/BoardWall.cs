@@ -3,11 +3,11 @@ using System.Collections;
 
 public class BoardWall : MonoBehaviour {
 
-	public void OnTriggerEnter(Collider other)
+	public void OnCollisionEnter(Collision other)
     {
-        if(other.tag == "wave")
+        if(other.collider.tag == "wave")
         {
-            other.SendMessage("DestroySelf");
+            other.gameObject.SendMessage("DestroySelf");
         }
 
     }
