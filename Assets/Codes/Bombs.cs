@@ -38,7 +38,7 @@ public class Bombs : MonoBehaviour
     {
         Instantiate(ExplosionEffect, transform.position, Quaternion.identity);
 
-        if (PhotonNetwork.isMasterClient)
+        if (photonView.isMine)
             PhotonNetwork.Destroy(gameObject);
     }
 
