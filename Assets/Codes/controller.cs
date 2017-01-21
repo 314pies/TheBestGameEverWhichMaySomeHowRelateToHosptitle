@@ -3,6 +3,7 @@ using System.Collections;
 
 public class controller : Photon.MonoBehaviour
 {
+    public float NetworkSmoothing = 3.6f;
     public Rigidbody CharacterController;
     public int LeftVelocity = -10, DownVelocity = -10, UpVelocity = 10, RightVelocity = 10;
     public int JumpVelocity = 5;
@@ -65,8 +66,8 @@ public class controller : Photon.MonoBehaviour
         else
         {
 
-            transform.position = Vector3.Lerp(transform.position, this.correctPlayerPos, Time.deltaTime * 5);
-            transform.rotation = Quaternion.Lerp(transform.rotation, this.correctPlayerRot, Time.deltaTime * 5);
+            transform.position = Vector3.Lerp(transform.position, this.correctPlayerPos, Time.deltaTime * NetworkSmoothing);
+          //  transform.rotation = Quaternion.Lerp(transform.rotation, this.correctPlayerRot, Time.deltaTime * 5);
         }
     }
 
