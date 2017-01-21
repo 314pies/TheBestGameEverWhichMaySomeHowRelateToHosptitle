@@ -33,9 +33,12 @@ public class BadGuyDeployment : MonoBehaviour
     {
         if (SelectedItem != -1)
         {
-            PhotonNetwork.Instantiate(ItemList[SelectedItem], SpawnPos, Quaternion.identity, 0);
-            Points -= EachItemPoints[SelectedItem];
-            PointText.text = "" + Points;
+            if (Points - EachItemPoints[SelectedItem] > 0)
+            {
+                PhotonNetwork.Instantiate(ItemList[SelectedItem], SpawnPos, Quaternion.identity, 0);
+                Points -= EachItemPoints[SelectedItem];
+                PointText.text = "" + Points;
+            }
         }
         else
             Debug.Log("No valid item is selected");
