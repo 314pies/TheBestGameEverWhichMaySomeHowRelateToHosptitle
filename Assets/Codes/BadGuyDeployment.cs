@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BadGuyDeployment : MonoBehaviour
 {
-
+    public int Points=100;
     public LayerMask rayCasyLayer;
     void Update()
     {
@@ -22,7 +22,7 @@ public class BadGuyDeployment : MonoBehaviour
 
     public int SelectedItem = -1;
     public string[] ItemList;
-
+    public int[] EachItemPoints;
     public void SelectItem(int _selectItem)
     {
         SelectedItem = _selectItem;
@@ -30,7 +30,10 @@ public class BadGuyDeployment : MonoBehaviour
     public void CreateItem(Vector3 SpawnPos)
     {
         if (SelectedItem != -1)
-            PhotonNetwork.Instantiate(ItemList[SelectedItem], SpawnPos,Quaternion.identity,0);
+        {
+            PhotonNetwork.Instantiate(ItemList[SelectedItem], SpawnPos, Quaternion.identity, 0);
+            Points -= EachItemPoints[SelectedItem];
+        }
         else
             Debug.Log("No valid item is selected");
     }

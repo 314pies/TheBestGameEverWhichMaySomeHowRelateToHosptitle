@@ -23,6 +23,7 @@ public struct PlayersPack
 [RequireComponent(typeof(PhotonView))]
 public class ModeManager : Photon.PunBehaviour
 {
+    public InGameStatus Status = InGameStatus.PickingTeam;
     public PlayersPack localPlayer;
     Dictionary<int, PlayersPack> PlayerList = new Dictionary<int, PlayersPack>();
 
@@ -39,8 +40,6 @@ public class ModeManager : Photon.PunBehaviour
     // Use this for initialization
     void Start()
     {
-        GoodPlayerSpawn();
-
 
     }
 
@@ -99,12 +98,15 @@ public class ModeManager : Photon.PunBehaviour
         }
         UpdateList();
     }
-
+    [Header("Picking Team")]
+    public GameObject PickingTeamSetup;
     public Text[] BadGuyNames;
     public Image[] BadGuyOKs;
     public Text[] GoodGuyNames;
     public Image[] GoodGuyOKs;
-
+    [Header("Counting Down")]
+    public GameObject CountingDownWindow;
+    public Text CoutingDownText;
     private void UpdateList()
     {
         foreach (Text text in BadGuyNames) text.text = "";
@@ -115,8 +117,17 @@ public class ModeManager : Photon.PunBehaviour
 
 
         int LastBadIndex = 0, LastGoodIndex = 0;
+        bool CountDownEnabled = true;
         foreach (int _key in PlayerList.Keys)
         {
+            if (PlayerList[_key].team == Team.Unknown)
+            {
+                CountDownEnabled = false;
+            }
+            if (PlayerList[_key].IsReady == false)
+            {
+                CountDownEnabled = false;
+            }
             Debug.Log(_key + ", ");
             if (PlayerList[_key].team == Team.BadSide)
             {
@@ -137,12 +148,118 @@ public class ModeManager : Photon.PunBehaviour
                 }
             }
         }
+
+        if (CountDownEnabled && LastGoodIndex > 0 && LastBadIndex > 0)
+        {
+            StartCoroutine(WaitAndCountingDown());
+            Debug.Log("Start counting down");
+        }
+        else
+        {
+            Status = InGameStatus.PickingTeam;
+        }
     }
 
 
-    public void GoodPlayerSpawn()
+    IEnumerator WaitAndCountingDown()
     {
-        PhotonNetwork.Instantiate("GoodPlayer", Vector3.zero, Quaternion.identity, 0);
+        Status = InGameStatus.RoundStartCountingDown;
+        CountingDownWindow.SetActive(true);
+        float TimeLeft = 10, TimeGap = 1.0f;
+        while (true)
+        {
+            CoutingDownText.text = "Game will start in..." + TimeLeft;
+            yield return new WaitForSeconds(TimeGap);
+            TimeLeft -= TimeGap;
+            if (Status != InGameStatus.RoundStartCountingDown)
+                break;
+            if (TimeLeft <= 0) break;
+        }
+        if (Status == InGameStatus.RoundStartCountingDown)
+        {
+            Debug.Log("Pass Counting");
+            if (PhotonNetwork.isMasterClient)
+            {
+                photonView.RPC("StartBadGuyDeployment", PhotonTargets.All);
+            }
+        }
+        else
+        {
+            Debug.Log("Counting failed");
+        }
+        CountingDownWindow.SetActive(false);
+    }
+
+    [Header("Bad guy Deploying")]
+    public float BadGuyDeployTime = 35.0f;
+    public GameObject BadguySetup;
+    public GameObject GoodguySetup;
+    public GameObject GoodGuyCover;
+    public Text GoodguyText;
+    public Text BadGuyTimeText;
+
+    [PunRPC]
+    public void StartBadGuyDeployment()
+    {
+        PickingTeamSetup.SetActive(false);
+        Status = InGameStatus.BadguyDeploying;
+        if (localPlayer.team == Team.BadSide)
+        {
+            BadguySetup.SetActive(true);
+        }
+        else if (localPlayer.team == Team.GoodSide)
+        {
+            GoodguySetup.SetActive(true);
+        }
+
+        StartCoroutine(BadguyDeployCountdown());
+    }
+
+    IEnumerator BadguyDeployCountdown()
+    {
+        float TimeLeft = BadGuyDeployTime, TimeGap = 1.0f;
+        while (true)
+        {
+            yield return new WaitForSeconds(TimeGap);
+            TimeLeft -= TimeGap;
+            if (localPlayer.team == Team.BadSide)
+            {
+                BadGuyTimeText.text = "" + TimeLeft;
+            }
+            else if (localPlayer.team == Team.GoodSide)
+            {
+                GoodguyText.text = "Waiting for the bad side..." + TimeLeft;
+            }
+            if (TimeLeft <= 0) break;
+        }
+        if (PhotonNetwork.isMasterClient)
+        {
+            photonView.RPC("StarSaving", PhotonTargets.All);
+        }
+    }
+    [Header("Gaming")]
+    public Transform PlayerSpawnPos;
+    public Patient patient;
+    [PunRPC]
+    public void StarSaving()
+    {
+        if(localPlayer.team == Team.GoodSide)
+        {
+            GoodGuyCover.SetActive(false);
+            Vector3 Pos = PlayerSpawnPos.position + new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5));
+            GoodPlayerSpawn(Pos);
+        }
+        else if(localPlayer.team == Team.BadSide)
+        {
+           
+        }
+
+        patient.StartCreateWave();
+    }
+
+    public void GoodPlayerSpawn(Vector3 spawnPos)
+    {
+        PhotonNetwork.Instantiate("GoodPlayer", spawnPos, Quaternion.identity, 0);
     }
 
 
@@ -154,5 +271,15 @@ public class ModeManager : Photon.PunBehaviour
             PlayerList.Remove(DisconnectedPlayer.ID);
             UpdateList();
         }
+    }
+
+    public override void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
+    {
+        if (!PlayerList.ContainsKey(newPlayer.ID))
+        {
+            PlayerList.Add(newPlayer.ID, new PlayersPack(newPlayer.ID, Team.Unknown, null, false));
+        }
+        UpdateList();
+        base.OnPhotonPlayerConnected(newPlayer);
     }
 }

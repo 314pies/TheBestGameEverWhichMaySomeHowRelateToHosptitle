@@ -20,11 +20,13 @@ public class Patient : MonoBehaviour
 
     // Use this for initialization
     void Start()
-    {
-     
-        InvokeRepeating("CreateWave", 2.0f, 1.0f);
+    { 
     }
 
+    public void StartCreateWave()
+    {
+        InvokeRepeating("CreateWave", 2.0f, 1.0f);
+    }
 
     public void RecieveWave()
     {

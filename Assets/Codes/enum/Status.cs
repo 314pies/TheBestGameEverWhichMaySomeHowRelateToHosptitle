@@ -13,3 +13,12 @@ public enum Team
     GoodSide,
     BadSide
 }
+
+public enum InGameStatus
+{
+    PickingTeam,
+    RoundStartCountingDown,
+    BadguyDeploying,
+    Saving,
+    EndOfMatch
+}
