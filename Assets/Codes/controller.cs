@@ -9,6 +9,13 @@ public class controller : Photon.MonoBehaviour
     public Rigidbody CharacterController;
     public int LeftVelocity = -10, DownVelocity = -10, UpVelocity = 10, RightVelocity = 10;
     public int JumpVelocity = 5;
+
+    public void Awake()
+    {
+        BubbleEffect.SetActive(false);
+    }
+
+
     void Start()
     {
         CharacterController = GetComponent<Rigidbody>();
@@ -128,7 +135,30 @@ public class controller : Photon.MonoBehaviour
        // status = PlayerStatus.Exploing;
         GetComponent<Rigidbody>().velocity = dir;
         Debug.Log("Explode");
+    }
 
+    public GameObject BubbleEffect;
+    public void TriggedTrap(bool IsTrapped)
+    {
+        photonView.RPC("Trap", PhotonTargets.AllBuffered, IsTrapped);
+    }
+
+    /// <summary>
+    /// Trap or realease this player
+    /// </summary>
+    /// <param name="IsTrapped"></param>
+    [PunRPC]
+    public void Trap(bool IsTrapped)
+    {
+        if (IsTrapped)
+        {
+            status = PlayerStatus.Trapped;
+            BubbleEffect.SetActive(true);
+        }else
+        {
+            status = PlayerStatus.Normal;
+            BubbleEffect.SetActive(false);
+        }
     }
 
 }

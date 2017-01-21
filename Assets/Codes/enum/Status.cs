@@ -3,5 +3,6 @@
     Normal,
     Freeze,
     Fall,
-    Exploing
+    Exploing,
+    Trapped
 }
