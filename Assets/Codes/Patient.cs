@@ -39,7 +39,7 @@ public class Patient : MonoBehaviour
     {
         Debug.Log("Update Health: "+NewHealth);
         HealthAmount = NewHealth;
-        if (HealthAmount >= TargetHealthAmount)
+        if (HealthAmount > TargetHealthAmount)
         {
             Debug.Log("Good guy win");
         }
