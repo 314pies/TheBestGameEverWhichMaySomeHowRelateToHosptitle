@@ -25,13 +25,13 @@ public class IceBerg : MonoBehaviour
     IEnumerator WaitAndRemove()
     {
         yield return new WaitForSeconds(FreezeTime);
-        photonView.RPC("Remove", PhotonTargets.MasterClient);
+        photonView.RPC("Remove", photonView.owner);
     }
 
     [PunRPC]
     public void Remove()
     {
-        if (PhotonNetwork.isMasterClient)
+        if (photonView.isMine)
         {
             PhotonNetwork.Destroy(gameObject);
         }
