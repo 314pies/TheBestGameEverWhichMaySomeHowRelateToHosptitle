@@ -291,8 +291,21 @@ public class ModeManager : Photon.PunBehaviour
         //Update uI
     }
 
+    [Header("Result")]
+    public GameObject GoodguyWinWindow;
+    public GameObject BadGuyWinWindow;
 
+    public void OnSomeoneWin(Team winningTeam)
+    {
+        if (PhotonNetwork.isMasterClient)
+            photonView.RPC("ReslutUpdate", PhotonTargets.All, (int)winningTeam);
+    }
 
+    [PunRPC]
+    public void ReslutUpdate(int winningTeam)
+    {
+        Team result = (Team)winningTeam;
+    }
     public override void OnPhotonPlayerDisconnected(PhotonPlayer DisconnectedPlayer)
     {
 

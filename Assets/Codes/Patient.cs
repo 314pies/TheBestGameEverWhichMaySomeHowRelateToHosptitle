@@ -6,12 +6,16 @@ using System.Collections;
 [RequireComponent(typeof(PhotonView))]
 public class Patient : MonoBehaviour
 {
+
+    public ModeManager modeManager;
     public int HealthAmount = 0;
     public int TargetHealthAmount = 15;
 
 
     public PhotonView photonView;
 
+    public Slider ProgressBar_Bad;
+    public Slider ProgressBar_Good;
 
     void Awake()
     {
@@ -20,7 +24,9 @@ public class Patient : MonoBehaviour
 
     // Use this for initialization
     void Start()
-    { 
+    {
+        ProgressBar_Good.maxValue = TargetHealthAmount;
+        ProgressBar_Bad.maxValue = TargetHealthAmount;
     }
 
     public void StartCreateWave()
@@ -35,19 +41,24 @@ public class Patient : MonoBehaviour
 
     }
 
-    public Text textUI;
+    //public Text textUI;
     [PunRPC]
     public void UpdateHealthAmount(int NewHealth)
     {
-        Debug.Log("Update Health: "+NewHealth);
+        Debug.Log("Update Health: " + NewHealth);
         HealthAmount = NewHealth;
         if (HealthAmount > TargetHealthAmount)
         {
+           // if (PhotonNetwork.isMasterClient)
+                modeManager.OnSomeoneWin(Team.GoodSide);
+
             Debug.Log("Good guy win");
         }
         else
         {
-            textUI.text = HealthAmount + "/" + TargetHealthAmount;
+            ProgressBar_Bad.value = HealthAmount;
+            ProgressBar_Good.value = HealthAmount;
+            //textUI.text = HealthAmount + "/" + TargetHealthAmount;
         }
     }
 
