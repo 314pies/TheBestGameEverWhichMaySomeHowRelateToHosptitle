@@ -1,19 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+using UnityEngine.UI;
 public class BadGuyDeployment : MonoBehaviour
 {
-    public int Points=100;
+    public int Points = 100;
+    public Text PointText;
     public LayerMask rayCasyLayer;
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-          
+
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 100.0f, rayCasyLayer))
-            {                
+            {
                 CreateItem(hit.point);
             }
         }
@@ -33,6 +35,7 @@ public class BadGuyDeployment : MonoBehaviour
         {
             PhotonNetwork.Instantiate(ItemList[SelectedItem], SpawnPos, Quaternion.identity, 0);
             Points -= EachItemPoints[SelectedItem];
+            PointText.text = "" + Points;
         }
         else
             Debug.Log("No valid item is selected");

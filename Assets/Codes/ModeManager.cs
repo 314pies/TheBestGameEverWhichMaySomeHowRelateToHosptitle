@@ -180,6 +180,8 @@ public class ModeManager : Photon.PunBehaviour
             Debug.Log("Pass Counting");
             if (PhotonNetwork.isMasterClient)
             {
+                PhotonNetwork.room.IsOpen = false;//close the room
+                PhotonNetwork.room.IsVisible = false;//close the room
                 photonView.RPC("StartBadGuyDeployment", PhotonTargets.All);
             }
         }
