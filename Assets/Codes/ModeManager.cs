@@ -281,6 +281,11 @@ public class ModeManager : Photon.PunBehaviour
 
             if (_timeLeft <= 0) break;
         }
+
+        if (patient.TargetHealthAmount > patient.HealthAmount)
+        {
+            OnSomeoneWin(Team.BadSide);
+        }
         //Round end
     }
 
@@ -305,7 +310,16 @@ public class ModeManager : Photon.PunBehaviour
     public void ReslutUpdate(int winningTeam)
     {
         Team result = (Team)winningTeam;
+        if(result == Team.BadSide)
+        {
+            BadGuyWinWindow.SetActive(true);
+        }
+        else if(result == Team.GoodSide)
+        {
+            GoodguyWinWindow.SetActive(true);
+        }
     }
+
     public override void OnPhotonPlayerDisconnected(PhotonPlayer DisconnectedPlayer)
     {
 
