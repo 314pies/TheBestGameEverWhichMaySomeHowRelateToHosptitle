@@ -242,27 +242,55 @@ public class ModeManager : Photon.PunBehaviour
     [Header("Gaming")]
     public Transform PlayerSpawnPos;
     public Patient patient;
+    public float RoundTime = 120.0f;
+    public float RoundTimeLeft;
     [PunRPC]
     public void StarSaving()
     {
-        if(localPlayer.team == Team.GoodSide)
+        if (localPlayer.team == Team.GoodSide)
         {
             GoodGuyCover.SetActive(false);
             Vector3 Pos = PlayerSpawnPos.position + new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5));
             GoodPlayerSpawn(Pos);
         }
-        else if(localPlayer.team == Team.BadSide)
+        else if (localPlayer.team == Team.BadSide)
         {
-           
+
         }
 
         patient.StartCreateWave();
+        StartCoroutine(TimeCountDown());
     }
 
     public void GoodPlayerSpawn(Vector3 spawnPos)
     {
         PhotonNetwork.Instantiate("GoodPlayer", spawnPos, Quaternion.identity, 0);
     }
+
+
+    IEnumerator TimeCountDown()
+    {
+        float _timeLeft = RoundTime, TimeGap = 1.0f;
+        while (true)
+        {
+            yield return new WaitForSeconds(TimeGap);
+            _timeLeft -= TimeGap;
+
+            if (PhotonNetwork.isMasterClient)
+                photonView.RPC("SynTime", PhotonTargets.All, _timeLeft);
+
+            if (_timeLeft <= 0) break;
+        }
+        //Round end
+    }
+
+    [PunRPC]
+    public void SynTime(float _timeLeft)
+    {
+        RoundTimeLeft = _timeLeft;
+        //Update uI
+    }
+
 
 
     public override void OnPhotonPlayerDisconnected(PhotonPlayer DisconnectedPlayer)
