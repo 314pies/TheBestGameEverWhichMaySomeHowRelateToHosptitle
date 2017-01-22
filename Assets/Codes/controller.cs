@@ -9,6 +9,7 @@ public class controller : Photon.MonoBehaviour
     public Rigidbody CharacterController;
     public int LeftVelocity = -10, DownVelocity = -10, UpVelocity = 10, RightVelocity = 10;
     public int JumpVelocity = 5;
+    public Transform DrBird;
 
     public void Awake()
     {
@@ -45,6 +46,7 @@ public class controller : Photon.MonoBehaviour
                         CharacterController.velocity.y,
                         CharacterController.velocity.z
                         );
+                    photonView.RPC("DrBirdRotation", PhotonTargets.All,true);
                 }
                 if (Input.GetKey(KeyCode.D))
                 {
@@ -54,6 +56,7 @@ public class controller : Photon.MonoBehaviour
                         CharacterController.velocity.y,
                         CharacterController.velocity.z
                         );
+                    photonView.RPC("DrBirdRotation", PhotonTargets.All, false);
                 }
                 if (Input.GetKey(KeyCode.W))
                 {
@@ -159,6 +162,13 @@ public class controller : Photon.MonoBehaviour
             status = PlayerStatus.Normal;
             BubbleEffect.SetActive(false);
         }
+    }
+
+    [PunRPC]
+    public void DrBirdRotation(bool LeftorRight)
+    {
+        if (LeftorRight) DrBird.transform.eulerAngles = new Vector3(0, 180, 0);
+        else DrBird.transform.eulerAngles = new Vector3(0, 0, 0);
     }
 
 }
