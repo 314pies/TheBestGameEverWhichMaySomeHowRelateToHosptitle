@@ -64,7 +64,7 @@ public class controller : Photon.MonoBehaviour
                         UpVelocity
                         );
                 }
-                if (Input.GetKeyDown("space"))
+                /*if (Input.GetKeyDown("space"))
                 {
                     //Debug.Log("aksdjhajhfdsg");
                     CharacterController.velocity = new Vector3(
@@ -72,7 +72,7 @@ public class controller : Photon.MonoBehaviour
                         JumpVelocity,
                         CharacterController.velocity.z
                         );
-                }
+                }*/
             }
         }
         else
