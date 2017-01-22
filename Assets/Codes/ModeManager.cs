@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 
 public struct PlayersPack
 {
@@ -31,7 +31,7 @@ public class ModeManager : Photon.PunBehaviour
     public void Awake()
     {
         photonView = GetComponent<PhotonView>();
-        localPlayer.Name = "Player";//Should load from player pref
+        localPlayer.Name = PlayerPrefs.GetString("Name","Player");//Should load from player pref
         localPlayer.ID = PhotonNetwork.player.ID;
         Debug.Log("My PID: " + localPlayer.ID);
         localPlayer.team = Team.Unknown;
@@ -40,7 +40,8 @@ public class ModeManager : Photon.PunBehaviour
     // Use this for initialization
     void Start()
     {
-
+        BadTimer.maxValue = RoundTime;
+        GoodTimer.maxValue = RoundTime;
     }
 
     // Update is called once per frame
@@ -198,7 +199,7 @@ public class ModeManager : Photon.PunBehaviour
     public GameObject GoodguySetup;
     public GameObject GoodGuyCover;
     public Text GoodguyText;
-    public Text BadGuyTimeText;
+    //public Text BadGuyTimeText;
 
     [PunRPC]
     public void StartBadGuyDeployment()
@@ -226,11 +227,11 @@ public class ModeManager : Photon.PunBehaviour
             TimeLeft -= TimeGap;
             if (localPlayer.team == Team.BadSide)
             {
-                BadGuyTimeText.text = "" + TimeLeft;
+               // BadGuyTimeText.text = "" + TimeLeft;
             }
             else if (localPlayer.team == Team.GoodSide)
             {
-                GoodguyText.text = "Waiting for the bad side..." + TimeLeft;
+                GoodguyText.text = "Starting in..." + TimeLeft;
             }
             if (TimeLeft <= 0) break;
         }
@@ -244,6 +245,9 @@ public class ModeManager : Photon.PunBehaviour
     public Patient patient;
     public float RoundTime = 120.0f;
     public float RoundTimeLeft;
+    public Slider BadTimer;
+    public Slider GoodTimer;
+
     [PunRPC]
     public void StarSaving()
     {
@@ -294,6 +298,9 @@ public class ModeManager : Photon.PunBehaviour
     {
         RoundTimeLeft = _timeLeft;
         //Update uI
+
+        GoodTimer.value = _timeLeft;
+        BadTimer.value = _timeLeft;
     }
 
     [Header("Result")]
@@ -318,7 +325,16 @@ public class ModeManager : Photon.PunBehaviour
         {
             GoodguyWinWindow.SetActive(true);
         }
+        StartCoroutine(WaitAndDisConnect());
     }
+
+    public IEnumerator WaitAndDisConnect()
+    {
+        yield return new WaitForSeconds(10.0f);
+        PhotonNetwork.Disconnect();
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
+    }
+
 
     public override void OnPhotonPlayerDisconnected(PhotonPlayer DisconnectedPlayer)
     {
