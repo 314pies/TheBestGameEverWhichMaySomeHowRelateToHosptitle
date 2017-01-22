@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using Photon;
 
 public class MatchMaking_PUN : Photon.PunBehaviour
 {
+
+    public GameObject MatchingWindow;
+    public Text MatchingText;
     private PhotonView PhotonView_Bridge;
     static public MatchMaking_PUN multiplayerController_Photon;
 
@@ -41,8 +45,10 @@ public class MatchMaking_PUN : Photon.PunBehaviour
     string expectedRoomName = null;
     void StartAMatch(string RoomName)
     {
+        MatchingWindow.SetActive(true);
         if (PhotonNetwork.connectionState == ConnectionState.Connected)
         {
+            MatchingText.text = "Searching...";
             if (RoomName == null)
             {
                 PhotonNetwork.JoinRandomRoom();
@@ -66,6 +72,7 @@ public class MatchMaking_PUN : Photon.PunBehaviour
 
     IEnumerator WaitForLobbyConnection(string RoomName)
     {
+        MatchingText.text = "Connecting to lobby...";
         int Count = 0;
         while (!PhotonNetwork.insideLobby)
         {
@@ -87,6 +94,7 @@ public class MatchMaking_PUN : Photon.PunBehaviour
 
     void OnPhotonJoinRoomFailed()
     {
+        MatchingText.text = "Creating Room...";
         Debug.Log("Can't join A Room with name : " + expectedRoomName + "room!  Let's create One");
         CreateARoom();
     }
@@ -113,6 +121,7 @@ public class MatchMaking_PUN : Photon.PunBehaviour
     public override void OnPhotonCreateRoomFailed(object[] codeAndMsg)
     {        
         Debug.LogError("expectedGameMode is unsigned");
+        MatchingWindow.SetActive(false);
         // base.OnPhotonCreateRoomFailed(codeAndMsg);{
     }
 
@@ -155,7 +164,7 @@ public class MatchMaking_PUN : Photon.PunBehaviour
 
     public override void OnDisconnectedFromPhoton()
     {
-       
+        MatchingWindow.SetActive(false);
     }
 
     //Called when we left the room(not photon server)
